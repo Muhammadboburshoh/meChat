@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+</head>
+<body>
+  
+  <h1 style="text-align: center;">Home page</h1>
+
+  <label for="fromI">from</label>
+  <input id="fromI" type="text">
+
+  <label for="toI">to</label>
+  <input id="toI" type="text">
+  <br>
+  <br> 
+  <label for="massageI">massage</label>
+  <input id="massageI" type="text">
+
+  <ul id="users"></ul>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js"></script>
+  <script>
+    
+    const socket = io()
+
+    socket.on("massage", (data) => console.log(data))
+
+    fromI.onkeyup = (evt) => {
+
+      if(evt.keyCode == 13) {
+
+        socket.emit("login", fromI.value.trim())
+      }
+    }
+
+    massageI.onkeyup = (evt) => {
+
+      if(evt.keyCode == 13) {
+
+        socket.emit("send_massage", {
+          from: fromI.value.trim(),
+          massage: massageI.value.trim(),
+          receiver: toI.value.trim(),
+        })
+      }
+    }
+
+    socket.on("new_login", username => {
+
+      alert(username)
+      /* const newLi = document.createElement("LI")
+      newLi.textContent = username
+
+      users.appendChild(newLi) */
+    })
+
+    socket.on("receive_massage", ({ from, massage }) => {
+      const newLi = document.createElement("LI")
+      newLi.innerHTML = `${massage} <mark>from</mark> ${from}`
+
+      users.appendChild(newLi)
+    })
+
+  </script>
+</body>
+</html>
